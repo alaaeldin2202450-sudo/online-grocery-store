@@ -1,0 +1,145 @@
+.fullscreen-background {
+  height: 100vh;
+  background-image: url("../img/home/BG.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Keeps the background fixed while scrolling */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.fullscreen-background::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3); /* Dim effect */
+  z-index: 1;
+}
+
+.main-content {
+  text-align: center;
+  z-index: 2; /* Ensure content is above the background */
+  position: relative; /* Add this to allow the positioning of the content */
+  margin-top: 100px; /* Adjust to avoid content overlapping with fixed header */
+}
+
+h1 {
+  font-size: 48px;
+  margin-bottom: 30px;
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-input,
+.location-select,
+.search-btn {
+  padding: 10px;
+  margin: 0 5px;
+  border-radius: 5px;
+  border: none;
+}
+
+.search-input {
+  width: 300px;
+}
+
+.search-btn {
+  background-color: #9b31f9;
+  color: white;
+  cursor: pointer;
+}
+
+.options {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.option {
+  background: white;
+  color: black;
+  padding: 20px;
+  margin: 0 10px;
+  width: 200px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.order-online-section {
+  text-align: center;
+  padding: 20px; /* Add padding */
+  background: rgba(255, 255, 255, 0.9); /* White background with opacity */
+}
+
+.order-online-section h2 {
+  font-size: 32px;
+  color: #9b31f9;
+  margin-bottom: 20px;
+}
+
+.order-online-section span {
+  color: #9b31f9;
+  font-weight: bold;
+}
+
+.online-options {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.option-box {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 280px;
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.option-box img {
+  width: 100px;
+  margin-bottom: 10px;
+  transform: rotateY(180deg);
+}
+
+.option-box h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.option-box p {
+  font-size: 14px;
+  color: #666;
+}
+
+.discount-section {
+  margin-top: 40px;
+  color: #9b31f9;
+}
+
+.discount-section p:first-child {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.discount-section p:last-child {
+  font-size: 16px;
+  color: #666;
+}
+.nav-icon {
+  width: 80px; /* Adjust size as needed */
+  height: 50px;
+  margin-right: px;
+  color: white;
+}

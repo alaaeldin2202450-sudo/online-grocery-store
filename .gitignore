@@ -1,0 +1,15 @@
+# Ignore Node dependencies
+Breadfast/node_modules/
+
+# Ignore environment files
+Breadfast/.env
+Breadfast/.env.*
+
+# Ignore Python virtual environment if present
+Breadfast/.venv/
+
+# Ignore OS files
+.DS_Store
+
+# Ignore logs
+npm-debug.log*

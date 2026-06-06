@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./components/headTag.ejs") %>
+  <head>
+    <link rel="stylesheet" href="./css/home.css" />
+  </head>
+  <body>
+    <%- include("./components/navbar.ejs") %>
+
+    <div class="fullscreen-background">
+      <div class="main-content">
+        <h1 class="text-white">Household Essentials, From Bread to Everything.</h1>
+        <div class="search-container">
+          <input
+            type="text"
+            placeholder="Find a Product"
+            class="search-input"
+          />
+          <select class="location-select">
+            <option>Cairo</option>
+            <option>Alexandria</option>
+            <option>Port Said</option>
+          </select>
+          <button class="search-btn">Go</button>
+        </div>
+        <p class="text-white">
+          Or explore
+          <a href="">Breadfast</a>
+        </p>
+        <div class="options">
+          <div class="option">
+            <h3>Deliver Now</h3>
+            <p>
+              Get fresh breakfast essentials delivered straight to your door.
+            </p>
+          </div>
+          <div class="option">
+            <h3>Schedule Another Time</h3>
+            <p>Order Now.. Deliver Later!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-online-section">
+      <h2>
+        - Now you can - <span><br />ORDER ONLINE</span>
+      </h2>
+      <div class="online-options">
+        <div class="option-box">
+          <img src="/img/home/track.png" alt="Track Order" />
+          <h3>Track your order</h3>
+          <p>
+            Want to know your order status? Now you can know exactly where your
+            order is throughout the delivery process.
+          </p>
+        </div>
+        <div class="option-box">
+          <img src="/img/home/no-phone-call.png" alt="No Phone Calls" />
+          <h3>No phone calls</h3>
+          <p>
+            Order your favorite food easier, faster, and without phone calls.
+          </p>
+        </div>
+      </div>
+
+      <div class="discount-section">
+        <p>Get 30 EGP OFF</p>
+        <p>
+          Use code <b>FIRST10</b> when placing your FIRST order through the
+          WEBSITE
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
