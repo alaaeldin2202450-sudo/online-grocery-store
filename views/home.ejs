@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./components/headTag.ejs") %>
+  <head>
+    <link rel="stylesheet" href="./css/home.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+  <body>
+    <%- include("./components/navbar.ejs") %>
+
+    <div class="fullscreen-background">
+      <div class="main-content">
+        <h1>Household Essentials, From Bread to Everything.</h1>
+        <p>Your premium grocery store delivered right to your doorstep. <br/>Or explore <a href="/signin">Breadfast</a> now.</p>
+        
+        <div class="search-container">
+          <input
+            type="text"
+            placeholder="Search for fresh produce..."
+            class="search-input"
+          />
+          <select class="location-select">
+            <option>Cairo</option>
+            <option>Alexandria</option>
+            <option>Port Said</option>
+          </select>
+          <a href="/signin" class="search-btn"><i class="fa-solid fa-arrow-right"></i>&nbsp; Go</a>
+        </div>
+        
+        <div class="options">
+          <div class="option" onclick="window.location.href='/signin'">
+            <h3><i class="fa-solid fa-bolt" style="color: #ffd700;"></i> Deliver Now</h3>
+            <p>Get fresh breakfast essentials delivered straight to your door in minutes.</p>
+          </div>
+          <div class="option" onclick="window.location.href='/signin'">
+            <h3><i class="fa-regular fa-clock" style="color: #66ccff;"></i> Schedule</h3>
+            <p>Order Now.. Deliver Later! Plan your week effortlessly.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-online-section py-5">
+      <div class="container">
+        <h2 class="section-title">
+          - Now you can - <br/><span class="highlight">ORDER ONLINE</span>
+        </h2>
+        <div class="online-options">
+          <div class="option-box modern-card">
+            <div class="icon-wrapper">
+              <i class="fa-solid fa-map-location-dot"></i>
+            </div>
+            <h3>Track your order</h3>
+            <p>
+              Want to know your order status? Know exactly where your
+              order is throughout the delivery process with real-time updates.
+            </p>
+          </div>
+          <div class="option-box modern-card">
+            <div class="icon-wrapper">
+              <i class="fa-solid fa-phone-slash"></i>
+            </div>
+            <h3>No phone calls</h3>
+            <p>
+              Order your favorite groceries easier, faster, and without any phone calls. A completely seamless digital experience.
+            </p>
+          </div>
+        </div>
+
+        <div class="discount-section pulse-animation">
+          <div class="discount-content">
+            <p class="discount-title">Get 30 EGP OFF</p>
+            <p class="discount-desc">
+              Use code <b class="promo-code">FIRST10</b> when placing your FIRST order through the WEBSITE.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

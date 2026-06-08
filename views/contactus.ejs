@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./components/headTag.ejs") %>
+  <head>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+      
+      body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(-45deg, #f3e5ff, #e6f0ff, #ffffff, #f9f2ff);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      .auth-container {
+        animation: slideUpFade 0.6s ease-out forwards;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 24px;
+        box-shadow: 0 15px 35px rgba(155, 49, 249, 0.1);
+        border: 1px solid rgba(255,255,255,0.8);
+        padding: 40px;
+        width: 100%;
+        max-width: 600px;
+      }
+
+      @keyframes slideUpFade {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h1 {
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+      }
+      
+      p.subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .form-label {
+        font-weight: 500;
+        color: #555;
+      }
+
+      .form-control {
+        border-radius: 12px;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        transition: all 0.3s;
+      }
+
+      .form-control:focus {
+        border-color: #9b31f9;
+        box-shadow: 0 0 0 4px rgba(155, 49, 249, 0.1);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #9b31f9, #7000cc);
+        border: none;
+        border-radius: 12px;
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(155, 49, 249, 0.3);
+      }
+      
+      .info-box {
+        background: #f9f2ff;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+      
+      .info-box i {
+        color: #9b31f9;
+        margin-right: 10px;
+        font-size: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .auth-container {
+          padding: 30px 20px;
+        }
+        h1 {
+          font-size: 28px;
+        }
+        .btn-primary, .btn-secondary {
+          padding: 12px 15px;
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <%- include("./components/navbar.ejs") %>
+    <div
+      class="d-flex justify-content-center align-items-center"
+      style="min-height: calc(100vh - 80px);"
+    >
+      <div class="auth-container m-3">
+        <h1 class="text-center">Contact Us</h1>
+        <p class="subtitle">We'd love to hear from you. Please fill out the form below or reach out to us directly.</p>
+
+        <div class="info-box d-flex flex-column gap-2">
+          <div><i class="fa-solid fa-envelope"></i> support@breadfast.com</div>
+          <div><i class="fa-solid fa-phone"></i> +20 100 123 4567</div>
+          <div><i class="fa-solid fa-location-dot"></i> Cairo, Egypt</div>
+        </div>
+
+        <form id="contactForm" style="color: black">
+          <div class="mb-3">
+            <label for="name" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Enter your full name" />
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter your email" />
+          </div>
+          
+          <div class="mb-4">
+            <label for="message" class="form-label">Message</label>
+            <textarea class="form-control" id="message" rows="4" placeholder="How can we help you?"></textarea>
+          </div>
+
+          <div class="d-flex justify-content-center mb-2">
+            <button type="submit" class="btn btn-primary w-100">Send Message</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script type="module">
+      import Toastify from "./js/toastify.js";
+
+      document
+        .getElementById("contactForm")
+        .addEventListener("submit", (event) => {
+          event.preventDefault();
+
+          const name = document.getElementById("name").value;
+          const email = document.getElementById("email").value;
+          const message = document.getElementById("message").value;
+
+          if (name.trim() === "" || email.trim() === "" || message.trim() === "") {
+            return Toastify("Please fill out all fields.", "red");
+          }
+
+          Toastify("Thank you! Your message has been sent.", "green");
+          document.getElementById("contactForm").reset();
+        });
+    </script>
+  </body>
+</html>

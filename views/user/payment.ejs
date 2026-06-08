@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../components/headTag.ejs") %>
+  <head>
+    <link rel="stylesheet" href="/css/user.css" />
+    <style>
+      .custom-offcanvas {
+        width: 500px !important;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include("./components/navbar.ejs") %>
+
+    <div class="container">
+      <main>
+        <div class="row g-5">
+          <div class="col-md-5 col-lg-4 order-md-last">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-primary">Receipt</span>
+            </h4>
+            <ul class="list-group mb-3">
+              <% let totalPrice = 0; %> <% user.cart.items.forEach(item => { let
+              itemTotal = item.quantity * item.product.price; totalPrice +=
+              itemTotal; %>
+              <li class="list-group-item d-flex justify-content-between lh-sm">
+                <div>
+                  <h6 class="my-0"><%= item.product.name %></h6>
+                </div>
+                <span class="text-muted"
+                  ><%= item.quantity %> X <%= item.product.price %> EGP</span
+                >
+              </li>
+              <% }); %>
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Total (EGP)</span>
+                <strong><%= totalPrice %> EGP</strong>
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-md-7 col-lg-8">
+            <h4 class="mb-3">Billing address</h4>
+            <form class="needs-validation" novalidate>
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <label for="firstName" class="form-label">First name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="firstName"
+                    value="<%=user.firstName%>"
+                    required
+                  />
+                </div>
+                <div class="col-sm-6">
+                  <label for="lastName" class="form-label">Last name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="lastName"
+                    value="<%=user.lastName%>"
+                    required
+                  />
+                </div>
+                <div class="col-12">
+                  <label for="email" class="form-label">Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    value="<%=user.email%>"
+                    disabled
+                  />
+                </div>
+                <div class="col-12">
+                  <label for="address" class="form-label">Address</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="address"
+                    placeholder="1234 Main St"
+                    required
+                  />
+                </div>
+
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1141.4640038494033!2d31.49145697962132!3d30.168047499618293!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14581ba8f4dc763b%3A0x8f3ad75af4946270!2sMIU%20-%20Main%20building!5e0!3m2!1sen!2seg!4v1737045073057!5m2!1sen!2seg"
+                  width="600"
+                  height="450"
+                  style="border: 0"
+                  allowfullscreen=""
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                ></iframe>
+              </div>
+
+              <hr class="my-4" />
+
+              <h4 class="mb-3">Payment</h4>
+              <div class="my-3">
+                <div class="form-check">
+                  <input
+                    id="credit"
+                    name="paymentMethod"
+                    type="radio"
+                    class="form-check-input"
+                    checked
+                    required
+                  />
+                  <label class="form-check-label" for="credit"
+                    >Credit card</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input
+                    id="debit"
+                    name="paymentMethod"
+                    type="radio"
+                    class="form-check-input"
+                    required
+                  />
+                  <label class="form-check-label" for="debit">Debit card</label>
+                </div>
+                <div class="form-check">
+                  <input
+                    id="cash"
+                    name="paymentMethod"
+                    type="radio"
+                    class="form-check-input"
+                    required
+                  />
+                  <label class="form-check-label" for="cash">Cash</label>
+                </div>
+              </div>
+
+              <div id="card-details">
+                <div class="row gy-3">
+                  <div class="col-md-6">
+                    <label for="cc-name" class="form-label">Name on card</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="cc-name"
+                      required
+                    />
+                    <small class="text-muted"
+                      >Full name as displayed on card</small
+                    >
+                  </div>
+                  <div class="col-md-6">
+                    <label for="cc-number" class="form-label"
+                      >Credit card number</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="cc-number"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label for="cc-expiration" class="form-label"
+                      >Expiration</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="cc-expiration"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label for="cc-cvv" class="form-label">CVV</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="cc-cvv"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <hr class="my-4" />
+
+              <button
+                id="checkout-btn"
+                class="w-100 btn btn-primary btn-lg"
+                type="button"
+              >
+                Continue to checkout
+              </button>
+            </form>
+          </div>
+        </div>
+      </main>
+
+      <footer class="my-2 pt-5 text-muted text-center text-small">
+        <p class="mb-1">&copy; 2025–2026 Breadfastt</p>
+        <ul class="list-inline">
+          <li class="list-inline-item"><a href="#">Privacy</a></li>
+          <li class="list-inline-item"><a href="#">Terms</a></li>
+          <li class="list-inline-item"><a href="#">Support</a></li>
+        </ul>
+      </footer>
+    </div>
+
+    <script type="module">
+      import Toastify from "/js/toastify.js";
+      document.addEventListener("DOMContentLoaded", () => {
+        const paymentMethodRadios = document.getElementsByClassName("form-check-input");
+        const cardDetails = document.getElementById("card-details");
+        const checkoutBtn = document.getElementById("checkout-btn");
+
+        // Function to toggle visibility of card-details
+        function toggleCardDetails() {
+          const selectedPaymentMethod = document.querySelector(
+            'input[name="paymentMethod"]:checked'
+          );
+          if (selectedPaymentMethod.id === "cash") {
+            cardDetails.style.display = "none";
+          } else {
+            cardDetails.style.display = "block";
+          }
+        }
+
+        // Add event listeners to all radio buttons
+        Array.from(paymentMethodRadios).forEach((radio) => {
+          radio.addEventListener("change", toggleCardDetails);
+        });
+
+        // Initialize visibility of card-details
+        toggleCardDetails();
+
+        // Handle checkout button click
+        checkoutBtn.addEventListener("click", async () => {
+          const userId = "<%= user._id %>"; // Replace with user ID from server-side rendering
+          const address = document.getElementById("address").value;
+          const paymentMethod = document.querySelector(
+            'input[name="paymentMethod"]:checked'
+          ).id;
+
+          // Validate address
+          if (!address.trim()) {
+            return Toastify("Please enter a valid address.", "red");
+          }
+
+          // Construct the items payload from the user's cart
+          const items = <%- JSON.stringify(user.cart.items.map(item => ({
+            product: item.product._id,
+            quantity: item.quantity,
+            price: item.product.price
+          }))) %>;
+
+          // Create the order payload
+          const orderPayload = {
+            userId,
+            items,
+            paymentMethod,
+            deliveryAddress: address,
+          };
+
+          try {
+            const response = await fetch("/create-order", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(orderPayload),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              Toastify("Order placed successfully!", "green");
+              setTimeout(() => {
+                window.location.href = `/user/${window.location.pathname.split("/")[2]}`
+                }, 500);
+            } else {
+              Toastify(`Error: ${result.message}`, "red");
+            }
+          } catch (error) {
+            console.error("Error placing order:", error);
+            Toastify("An error occurred. Please try again later.", "red");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

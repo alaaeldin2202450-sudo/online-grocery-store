@@ -1,0 +1,51 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <!-- Brand Logo -->
+    <a class="navbar-brand" href="/user/<%=user.id%>">
+      <img
+        src="/img/Breadfast.png"
+        alt="Breadfast Logo"
+        style="height: 60px"
+      />
+    </a>
+
+    <!-- Toggler Button for Mobile View -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"><i class="fa-solid fa-bars"></i></span>
+    </button>
+
+    <!-- Collapsible Content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="/user/<%=user.id%>/history">History</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href=""></a>
+        </li>
+        <li class="nav-item">
+          <button
+            class="btn"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasRight"
+            aria-controls="offcanvasRight"
+          >
+          <i class="fa-solid fa-cart-shopping"></i>Cart
+          </button>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Log out</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
