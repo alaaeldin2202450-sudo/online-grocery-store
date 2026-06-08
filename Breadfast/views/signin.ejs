@@ -65,30 +65,28 @@
 
     <script type="module">
       // Add an event listener for the form submission
-      import Toastify from "./js/toastify.js";
+      import Toastify from "/js/toastify.js";
 
       document
         .getElementById("loginForm")
         .addEventListener("submit", async (event) => {
           event.preventDefault(); // Prevent the default form submission
 
+          const params = new URLSearchParams(window.location.search);
+          const redirect = params.get("redirect");
+
           // Collecting the form data
           const email = document.getElementById("email").value;
           const password = document.getElementById("password").value;
 
-          let valid = true;
-
           // Validation checks
           if (email.trim() === "") {
-            valid = false;
             return Toastify("Email is required.", "red");
           } else if (!/\S+@\S+\.\S+/.test(email)) {
-            valid = false;
             return Toastify("Please enter a valid email address.", "red");
           }
 
           if (password.trim() === "") {
-            valid = false;
             return Toastify("Password is required.", "red");
           }
 
@@ -107,17 +105,30 @@
             const data = await response.json();
 
             if (response.ok) {
-              Toastify("sign in successful!", "green");
-              if (data.user.role == "user")
-                window.location.href = `/${data.user.role}/${data.user.id}`;
-              else window.location.href = `/${data.user.role}`;
+              Toastify("Sign in successful!", "green");
+
+              const safeRedirect =
+                redirect && redirect.startsWith("/") ? redirect : null;
+              const destination =
+                safeRedirect ||
+                (data.user.role === "user"
+                  ? `/${data.user.role}/${data.user.id}`
+                  : `/${data.user.role}`);
+
+              setTimeout(() => {
+                window.location.href = destination;
+              }, 600);
             } else {
-              Toastify(data.error || "Wrong email or password.", "red");
+              Toastify(data.error || data.message || "Wrong email or password.", "red");
             }
           } catch (error) {
             Toastify("An error occurred: " + error.message, "red");
           }
         });
+
+      document.querySelector("button.btn-secondary").addEventListener("click", () => {
+        window.location.href = "/";
+      });
     </script>
   </body>
 </html>

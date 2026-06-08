@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const Order = require("../models/order"); // Adjust the path as per your project structure
-const Product = require("../models/product");
-const User = require("../models/user");
+const Order = require("../models/Order");
+const Product = require("../models/Product");
+const User = require("../models/User");
 
 // Create Order API
 const createOrder = async (req, res) => {
@@ -17,24 +17,33 @@ const createOrder = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: "No items provided" });
+    }
+
     let totalPrice = 0;
 
-    // Verify product availability and calculate the total price
+    // Verify product availability and calculate the total price (recalculate prices server-side)
     for (const item of items) {
+      if (!item.product || !item.quantity || item.quantity <= 0) {
+        return res.status(400).json({ message: "Invalid item in order" });
+      }
+
       const product = await Product.findById(item.product);
       if (!product) {
-        return res
-          .status(404)
-          .json({ message: `Product ${item.product} not found` });
+        return res.status(404).json({ message: `Product ${item.product} not found` });
       }
 
       if (product.quantity < item.quantity) {
-        return res
-          .status(400)
-          .json({ message: `Insufficient stock for product: ${product.name}` });
+        return res.status(400).json({ message: `Insufficient stock for product: ${product.name}` });
       }
 
-      totalPrice += product.price * item.quantity;
+      // Use the product price from DB to avoid client tampering
+      const linePrice = product.price * item.quantity;
+      totalPrice += linePrice;
+
+      // ensure the item.price stored reflects server-calculated price
+      item.price = product.price;
     }
 
     // Deduct product quantities in the database
@@ -50,7 +59,7 @@ const createOrder = async (req, res) => {
       items: items.map((item) => ({
         product: item.product,
         quantity: item.quantity,
-        price: item.price,
+        price: (item.price || 0) * item.quantity,
       })),
       totalPrice,
       paymentMethod,

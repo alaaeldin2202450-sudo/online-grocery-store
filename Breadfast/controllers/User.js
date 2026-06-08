@@ -64,7 +64,18 @@ const createUser = async (req, res) => {
     });
 
     await user.save();
-    res.status(201).json({ user, msg: "User Created successfully" });
+    setAuthCookie(res, user);
+
+    res.status(201).json({
+      user: {
+        id: user._id.toString(),
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      },
+      msg: "User created successfully",
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

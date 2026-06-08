@@ -9,26 +9,101 @@ const {
 
 const User = require("../models/User");
 const Product = require("../models/Product");
-const Order = require("../models/order");
+const Order = require("../models/Order");
+const { CATEGORY_RULES } = require("../utils/productHelpers");
 
-router.get("/", (req, res) => {
-  res.render("./home", { title: "Home" });
+const PAGE_SIZE = 24;
+
+router.use((req, res, next) => {
+  res.locals.buildPageUrl = (baseUrl, overrides = {}) => {
+    const page = overrides.page ?? (parseInt(req.query.page, 10) || 1);
+    const search = overrides.search ?? (req.query.search || "");
+    const category = overrides.category ?? (req.query.category || "");
+    const params = new URLSearchParams();
+    if (page > 1) params.set("page", String(page));
+    if (search) params.set("search", search);
+    if (category) params.set("category", category);
+    const qs = params.toString();
+    return qs ? `${baseUrl}?${qs}` : baseUrl;
+  };
+  next();
+});
+
+async function fetchProducts(req) {
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const search = (req.query.search || "").trim();
+  const category = (req.query.category || "").trim();
+
+  const filter = {};
+  if (search) {
+    filter.$or = [
+      { title: { $regex: search, $options: "i" } },
+      { description: { $regex: search, $options: "i" } },
+    ];
+  }
+
+  if (category) {
+    const rule = CATEGORY_RULES.find((r) => r.category === category);
+    if (rule) {
+      filter.title = { $regex: rule.keywords.join("|"), $options: "i" };
+    }
+  }
+
+  const [products, total] = await Promise.all([
+    Product.find(filter)
+      .sort({ title: 1 })
+      .skip((page - 1) * PAGE_SIZE)
+      .limit(PAGE_SIZE),
+    Product.countDocuments(filter),
+  ]);
+
+  return {
+    products,
+    pagination: {
+      page,
+      limit: PAGE_SIZE,
+      total,
+      pages: Math.ceil(total / PAGE_SIZE) || 1,
+    },
+    search,
+    category,
+    categories: CATEGORY_RULES.map((r) => r.category),
+    totalProducts: total,
+  };
+}
+
+router.get("/", async (req, res) => {
+  try {
+    const data = await fetchProducts(req);
+    res.render("home", { title: "Home", ...data });
+  } catch (err) {
+    console.error("Failed to load products for home:", err);
+    res.render("home", {
+      title: "Home",
+      products: [],
+      pagination: { page: 1, limit: PAGE_SIZE, total: 0, pages: 1 },
+      search: "",
+      category: "",
+      categories: [],
+      totalProducts: 0,
+    });
+  }
 });
 
 router.get("/aboutus", (req, res) => {
-  res.render("./aboutus", { title: "About us" });
+  res.render("aboutus", { title: "About us" });
 });
 
 router.get("/signin", (req, res) => {
-  res.render("./signin", { title: "Sign in" });
+  res.render("signin", { title: "Sign in" });
 });
 
 router.get("/signup", (req, res) => {
-  res.render("./signup", { title: "Signup" });
+  res.render("signup", { title: "Signup" });
 });
 
 router.get("/admin", authenticateToken, authorizeAdmin, (req, res) => {
-  res.render("./admin/dashboard.ejs", { title: "Admin" });
+  res.render("admin/dashboard", { title: "Admin" });
 });
 
 router.get(
@@ -36,7 +111,7 @@ router.get(
   authenticateToken,
   authorizeAdmin,
   async (req, res) => {
-    res.render("./admin/users.ejs", {
+    res.render("admin/users", {
       title: "Admin",
       users: await User.find(),
     });
@@ -48,7 +123,7 @@ router.get(
   authenticateToken,
   authorizeAdmin,
   async (req, res) => {
-    res.render("./admin/editUser.ejs", {
+    res.render("admin/editUser", {
       title: "Admin",
       user: await User.findById(req.params.id),
     });
@@ -60,7 +135,7 @@ router.get(
   authenticateToken,
   authorizeAdmin,
   async (req, res) => {
-    res.render("./admin/products.ejs", {
+    res.render("admin/products", {
       title: "Admin",
       products: await Product.find(),
     });
@@ -78,10 +153,11 @@ router.get("/user/:id", authenticateToken, authorizeUser, async (req, res) => {
       return res.redirect("/");
     }
 
-    res.render("./user/home.ejs", {
+    const data = await fetchProducts(req);
+    res.render("user/home", {
       title: "User",
       user,
-      products: await Product.find(),
+      ...data,
     });
   } catch (error) {
     console.error(error);
@@ -104,8 +180,8 @@ router.get(
         return res.redirect("/");
       }
 
-      // Render the user home page with user details, products, and cart
-      res.render("./user/payment.ejs", {
+      // Render the user payment page with user details, products, and cart
+      res.render("user/payment", {
         title: "User",
         user,
         products: await Product.find(),
@@ -136,14 +212,14 @@ router.get(
         .sort({ createdAt: -1 }); // Optionally sort by creation date
 
       if (!orders || orders.length === 0) {
-        return res.render("./user/history.ejs", {
+        return res.render("user/history", {
           title: "User",
           user,
           orders,
         });
       }
 
-      res.render("./user/history.ejs", {
+      res.render("user/history", {
         title: "User",
         user,
         orders,

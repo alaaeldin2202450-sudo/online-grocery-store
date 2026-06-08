@@ -1,0 +1,77 @@
+<section class="products-section" id="products">
+  <div class="container product-panel">
+    <div class="section-header">
+      <h2>Shop fresh groceries</h2>
+      <p class="text-muted">Browse our catalog — names, prices, stock, and images loaded live from MongoDB.</p>
+    </div>
+
+    <div class="products-stats">
+      <span class="stat-pill"><i class="fa-solid fa-box"></i> <%= totalProducts.toLocaleString() %> products</span>
+      <span class="stat-pill"><i class="fa-solid fa-database"></i> Connected to MongoDB</span>
+      <% if (pagination.page > 1 || pagination.pages > 1) { %>
+      <span class="stat-pill"><i class="fa-solid fa-layer-group"></i> Page <%= pagination.page %> of <%= pagination.pages %></span>
+      <% } %>
+    </div>
+
+    <% if (categories && categories.length > 0) { %>
+    <div class="category-bar">
+      <a href="<%= buildPageUrl(baseUrl, { page: 1, category: '', search: search }) %>" class="category-pill <%= !category ? 'active' : '' %>">All</a>
+      <% categories.forEach(cat => { %>
+      <a href="<%= buildPageUrl(baseUrl, { page: 1, category: cat, search: search }) %>" class="category-pill <%= category === cat ? 'active' : '' %>"><%= cat %></a>
+      <% }); %>
+    </div>
+    <% } %>
+
+    <div class="product-topbar">
+      <div>
+        <h2>Available products</h2>
+        <p class="text-muted">Tap Add to cart for a fast checkout experience.</p>
+      </div>
+      <form class="search-panel" method="get" action="<%= baseUrl %>">
+        <% if (category) { %><input type="hidden" name="category" value="<%= category %>" /><% } %>
+        <input id="product-search" name="search" type="search" placeholder="Search products..." value="<%= search || '' %>" />
+      </form>
+    </div>
+
+    <% if (products && products.length > 0) { %>
+    <div class="product-grid">
+      <% products.forEach(product => { %>
+      <article class="product-card" data-product-name="<%= product.name %>" data-product-category="<%= product.category %>">
+        <div class="product-image">
+            <img src="<%= product.imageUrl %>" alt="<%= product.name %>" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+        </div>
+        <div class="product-meta">
+          <span class="badge-category"><%= product.category %></span>
+          <h3><%= product.name %></h3>
+          <p class="product-desc"><%= product.description ? product.description : 'Fresh grocery item for your home.' %></p>
+        </div>
+        <div class="product-footer">
+          <div>
+            <span class="price"><%= product.displayPrice %><% if (product.packageSizing) { %><small><%= product.packageSizing %></small><% } %></span>
+            <% const stockClass = product.quantity > 20 ? 'in-stock' : product.quantity > 0 ? 'low-stock' : 'out-stock'; %>
+            <p class="stock <%= stockClass %>"><%= product.quantity > 0 ? 'In stock: ' + product.quantity : 'Out of stock' %></p>
+          </div>
+          <button class="btn btn-outline-primary add-to-cart" data-product-id="<%= product._id %>" <%= product.quantity <= 0 ? 'disabled' : '' %>>Add to cart</button>
+        </div>
+      </article>
+      <% }); %>
+    </div>
+
+    <% if (pagination.pages > 1) { %>
+    <nav class="pagination-bar" aria-label="Product pagination">
+      <a class="page-btn <%= pagination.page <= 1 ? 'disabled' : '' %>" href="<%= buildPageUrl(baseUrl, { page: pagination.page - 1, search: search, category: category }) %>"><i class="fa-solid fa-chevron-left"></i></a>
+      <% for (let p = Math.max(1, pagination.page - 2); p <= Math.min(pagination.pages, pagination.page + 2); p++) { %>
+      <a class="page-btn <%= p === pagination.page ? 'active' : '' %>" href="<%= buildPageUrl(baseUrl, { page: p, search: search, category: category }) %>"><%= p %></a>
+      <% } %>
+      <a class="page-btn <%= pagination.page >= pagination.pages ? 'disabled' : '' %>" href="<%= buildPageUrl(baseUrl, { page: pagination.page + 1, search: search, category: category }) %>"><i class="fa-solid fa-chevron-right"></i></a>
+    </nav>
+    <% } %>
+    <% } else { %>
+    <div class="empty-state">
+      <i class="fa-solid fa-basket-shopping"></i>
+      <h3>No products found</h3>
+      <p>Try a different search or category, or make sure MongoDB is running on localhost:27017.</p>
+    </div>
+    <% } %>
+  </div>
+</section>

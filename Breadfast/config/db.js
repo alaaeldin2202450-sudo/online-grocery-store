@@ -3,7 +3,10 @@ require("dotenv").config();
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const Product = require("../models/Product");
 
-const MONGO_URI = process.env.MONGODB_URI || process.env.MONGO_URI;
+const MONGO_URI =
+  process.env.MONGODB_URI ||
+  process.env.MONGO_URI ||
+  "mongodb://localhost:27017/grocery_db";
 
 mongoose.set("strictQuery", false);
 
@@ -75,16 +78,14 @@ async function connectDB() {
     useUnifiedTopology: true,
   };
 
-  if (!MONGO_URI || MONGO_URI.trim() === "") {
-    console.log("No MONGO_URI set — starting in-memory MongoDB.");
-    await startInMemoryServer();
-    return;
-  }
-
   try {
     await mongoose.connect(MONGO_URI, options);
-    console.log("mongodb connection success!");
-    await seedProductsIfEmpty();
+    console.log(`MongoDB connected: ${MONGO_URI}`);
+    const count = await Product.countDocuments();
+    console.log(`Found ${count} products in database.`);
+    if (count === 0) {
+      await seedProductsIfEmpty();
+    }
   } catch (err) {
     console.error("mongodb connection failed!", err.message);
     console.warn("Falling back to in-memory MongoDB for local demo.");

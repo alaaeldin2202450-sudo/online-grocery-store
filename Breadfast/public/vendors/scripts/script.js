@@ -338,3 +338,167 @@ function CopyToClipboard(value, showNotification, notificationText) {
     return false;
 })();
 
+
+async function loadGroceryProducts() {
+    try {
+        console.log('Fetching products from MongoDB...');
+        const response = await fetch('/api/products');
+        const products = await response.json();
+        
+        console.log(`Loaded ${products.length} products`);
+        
+        // Check if there's a products container in your HTML
+        // You need to tell me what the container ID or class is
+        
+        // Example: If you have a table with id="productsTable"
+        const tableBody = document.querySelector('#productsTable tbody');
+        if (tableBody) {
+            tableBody.innerHTML = '';
+            products.forEach(product => {
+                const price = product.pricing?.price || 'N/A';
+                const title = product.title || 'No title';
+                
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${title}</td>
+                        <td>$${price}</td>
+                    </tr>
+                `;
+            });
+        }
+        
+        // Example: If you have a grid with class="products-grid"
+        const grid = document.querySelector('.products-grid');
+        if (grid) {
+            grid.innerHTML = '';
+            products.forEach(product => {
+                const price = product.pricing?.price || 'N/A';
+                const title = product.title || 'No title';
+                
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <h3>${title}</h3>
+                        <div class="price">$${price}</div>
+                    </div>
+                `;
+            });
+        }
+        
+        return products;
+    } catch (error) {
+        console.error('Error loading products:', error);
+        return [];
+    }
+}
+
+// Load products when page is ready
+$(document).ready(function() {
+    // Your existing code is already here
+    
+    // Add this line to load products
+    loadGroceryProducts();
+});
+// ============================================
+// MONGODB PRODUCTS LOADER
+// ============================================
+
+// Function to fetch and display products
+async function displayGroceryProducts() {
+    try {
+        console.log('🛒 Fetching grocery products...');
+        
+        const response = await fetch('http://localhost:3001/api/products');
+        const products = await response.json();
+        
+        console.log(`✅ Loaded ${products.length} products`);
+        
+        // Create a products container if it doesn't exist
+        let productsContainer = document.getElementById('grocery-products-container');
+        
+        if (!productsContainer) {
+            // Create a new container at the top of the page
+            productsContainer = document.createElement('div');
+            productsContainer.id = 'grocery-products-container';
+            productsContainer.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 400px;
+                max-height: 500px;
+                background: white;
+                border: 2px solid #333;
+                border-radius: 10px;
+                padding: 15px;
+                overflow-y: auto;
+                z-index: 9999;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                font-family: Arial, sans-serif;
+            `;
+            
+            productsContainer.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0;">🛒 Grocery Products</h3>
+                    <button id="close-products-btn" style="background: red; color: white; border: none; border-radius: 5px; cursor: pointer;">×</button>
+                </div>
+                <div id="products-list" style="max-height: 400px; overflow-y: auto;">
+                    Loading...
+                </div>
+            `;
+            
+            document.body.appendChild(productsContainer);
+            
+            // Close button functionality
+            document.getElementById('close-products-btn').onclick = function() {
+                productsContainer.style.display = 'none';
+            };
+        }
+        
+        // Display products
+        const productsList = document.getElementById('products-list');
+        if (productsList) {
+            if (products.length === 0) {
+                productsList.innerHTML = '<p>No products found in database.</p>';
+            } else {
+                productsList.innerHTML = '';
+                products.slice(0, 20).forEach(product => {
+                    const price = product.pricing?.price || 'N/A';
+                    const title = product.title || 'Untitled';
+                    
+                    const productDiv = document.createElement('div');
+                    productDiv.style.cssText = `
+                        border-bottom: 1px solid #ddd;
+                        padding: 10px 0;
+                        margin-bottom: 5px;
+                    `;
+                    productDiv.innerHTML = `
+                        <strong>${title.substring(0, 50)}</strong><br>
+                        <span style="color: green; font-weight: bold;">$${price}</span>
+                    `;
+                    productsList.appendChild(productDiv);
+                });
+                
+                if (products.length > 20) {
+                    productsList.innerHTML += `<p style="text-align: center; color: #666;">Showing 20 of ${products.length} products</p>`;
+                }
+            }
+        }
+        
+    } catch (error) {
+        console.error('❌ Error loading products:', error);
+        
+        // Show error message
+        const productsList = document.getElementById('products-list');
+        if (productsList) {
+            productsList.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        }
+    }
+}
+
+// Load products when page is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(displayGroceryProducts, 1000);
+    });
+} else {
+    setTimeout(displayGroceryProducts, 1000);
+}

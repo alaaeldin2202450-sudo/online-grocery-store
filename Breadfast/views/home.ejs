@@ -2,75 +2,121 @@
 <html lang="en">
   <%- include("./components/headTag.ejs") %>
   <head>
-    <link rel="stylesheet" href="./css/home.css" />
+    <link rel="stylesheet" href="/css/home.css" />
+    <link rel="stylesheet" href="/css/products.css" />
   </head>
   <body>
     <%- include("./components/navbar.ejs") %>
 
-    <div class="fullscreen-background">
-      <div class="main-content">
-        <h1 class="text-white">Household Essentials, From Bread to Everything.</h1>
-        <div class="search-container">
-          <input
-            type="text"
-            placeholder="Find a Product"
-            class="search-input"
-          />
-          <select class="location-select">
-            <option>Cairo</option>
-            <option>Alexandria</option>
-            <option>Port Said</option>
-          </select>
-          <button class="search-btn">Go</button>
-        </div>
-        <p class="text-white">
-          Or explore
-          <a href="">Breadfast</a>
-        </p>
-        <div class="options">
-          <div class="option">
-            <h3>Deliver Now</h3>
-            <p>
-              Get fresh breakfast essentials delivered straight to your door.
-            </p>
+    <main class="hero-section">
+      <div class="hero-overlay"></div>
+      <div class="hero-container container">
+        <div class="hero-copy">
+          <span class="eyebrow">Fresh groceries, delivered fast</span>
+          <h1>Modern online grocery shopping made simple.</h1>
+          <p>
+            Shop <%= totalProducts.toLocaleString() %>+ products with real-time data from your MongoDB database —
+            names, prices, stock, and images.
+          </p>
+
+          <div class="hero-actions">
+            <form class="search-box" action="/" method="get">
+              <input type="text" name="search" placeholder="Search for bread, milk, fruits..." value="<%= search || '' %>" />
+              <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+            <a href="#products" class="btn btn-light hero-shop-btn">Browse products</a>
+            <div class="location-chip">Delivering to <strong>Cairo</strong></div>
           </div>
-          <div class="option">
-            <h3>Schedule Another Time</h3>
-            <p>Order Now.. Deliver Later!</p>
+
+          <div class="hero-badges">
+            <div class="badge-item">
+              <i class="fa-solid fa-truck-fast"></i>
+              <span>Fast delivery</span>
+            </div>
+            <div class="badge-item">
+              <i class="fa-solid fa-leaf"></i>
+              <span>Fresh products</span>
+            </div>
+            <div class="badge-item">
+              <i class="fa-solid fa-database"></i>
+              <span>MongoDB live data</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-cards">
+          <div class="hero-card">
+            <h3>Order online</h3>
+            <p>Find everything you need in one place and get it delivered today.</p>
+          </div>
+          <div class="hero-card highlight-card">
+            <h3><%= totalProducts.toLocaleString() %> products</h3>
+            <p>Your full grocery catalog is connected and ready to shop.</p>
           </div>
         </div>
       </div>
-    </div>
+    </main>
 
-    <div class="order-online-section">
-      <h2>
-        - Now you can - <span><br />ORDER ONLINE</span>
-      </h2>
-      <div class="online-options">
-        <div class="option-box">
-          <img src="/img/home/track.png" alt="Track Order" />
-          <h3>Track your order</h3>
-          <p>
-            Want to know your order status? Now you can know exactly where your
-            order is throughout the delivery process.
-          </p>
-        </div>
-        <div class="option-box">
-          <img src="/img/home/no-phone-call.png" alt="No Phone Calls" />
+    <section class="features-section container">
+      <div class="section-header center">
+        <h2>Why shop with Breadfast?</h2>
+        <p>Smart groceries built for modern online shopping.</p>
+      </div>
+
+      <div class="features-grid">
+        <article class="feature-card">
+          <i class="fa-solid fa-clock"></i>
+          <h3>Fast delivery</h3>
+          <p>Track your order and get updates from store to doorstep.</p>
+        </article>
+        <article class="feature-card">
+          <i class="fa-solid fa-mobile-screen-button"></i>
           <h3>No phone calls</h3>
-          <p>
-            Order your favorite food easier, faster, and without phone calls.
-          </p>
-        </div>
+          <p>Order directly from the website without extra steps.</p>
+        </article>
+        <article class="feature-card discount-card">
+          <i class="fa-solid fa-percent"></i>
+          <h3>New customer offer</h3>
+          <p>Use code <strong>FIRST10</strong> and get 30 EGP off your first order.</p>
+        </article>
       </div>
+    </section>
 
-      <div class="discount-section">
-        <p>Get 30 EGP OFF</p>
-        <p>
-          Use code <b>FIRST10</b> when placing your FIRST order through the
-          WEBSITE
-        </p>
-      </div>
-    </div>
+    <%- include("./partials/productGrid.ejs", { baseUrl: '/' }) %>
+
+    <script type="module">
+      import Toastify from "/js/toastify.js";
+      document.addEventListener("DOMContentLoaded", () => {
+        const addToCartButtons = document.querySelectorAll(".add-to-cart");
+
+        addToCartButtons.forEach((button) => {
+          button.addEventListener("click", async (e) => {
+            const productId = e.currentTarget.getAttribute("data-product-id");
+            const pathParts = window.location.pathname.split("/");
+            const userId = pathParts.length > 2 ? pathParts[2] : null;
+
+            if (!userId) {
+              const redirectTo = encodeURIComponent(window.location.pathname + window.location.search);
+              window.location.href = `/signin?redirect=${redirectTo}`;
+              return;
+            }
+
+            const response = await fetch("/cart/add", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ userId, productId, quantity: 1 }),
+            });
+
+            if (response.status === 200) {
+              Toastify("Product added successfully.", "green");
+              setTimeout(() => location.reload(), 700);
+            } else {
+              const json = await response.json().catch(() => ({}));
+              Toastify(json.message || "Something went wrong.", "red");
+            }
+          });
+        });
+      });
+    </script>
   </body>
 </html>

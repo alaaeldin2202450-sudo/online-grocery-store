@@ -1,55 +1,57 @@
 const mongoose = require("mongoose");
+const {
+  deriveCategory,
+  getStock,
+  formatPrice,
+  parseProductImage,
+} = require("../utils/productHelpers");
 
 const productSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
+    productId: String,
+    title: String,
+    description: String,
+    productImage: mongoose.Schema.Types.Mixed,
+    packageSizing: String,
+    pricing: {
+      price: Number,
+      displayPrice: String,
     },
-    category: {
-      type: String,
-      required: true,
-      enum: [
-        "Bakeries & Pastries",
-        "Dairy",
-        "Fruits and Veggies",
-        "Snacks",
-        "Behind the Counter",
-        "Beverages",
-        "Beauty Essentials",
-      ],
-    },
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    description: {
-      type: String,
-      trim: true,
-    },
-    imageUrl: {
-      type: String,
-      trim: true,
-      default : "/img/placeholder.png"
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
+    pricingUnits: mongoose.Schema.Types.Mixed,
   },
   {
-    timestamps: true,
+    strict: false,
+    collection: "products",
   }
 );
 
-// Prevent model overwrite
+productSchema.virtual("name").get(function () {
+  return this.title || "Product";
+});
+
+productSchema.virtual("displayPrice").get(function () {
+  return formatPrice(this);
+});
+
+productSchema.virtual("price").get(function () {
+  return this.pricing?.price ?? 0;
+});
+
+productSchema.virtual("quantity").get(function () {
+  return getStock(this);
+});
+
+productSchema.virtual("category").get(function () {
+  return deriveCategory(this.title || "");
+});
+
+productSchema.virtual("imageUrl").get(function () {
+  return parseProductImage(this.productImage);
+});
+
+productSchema.set("toJSON", { virtuals: true });
+productSchema.set("toObject", { virtuals: true });
+
 const Product = mongoose.models.Product || mongoose.model("Product", productSchema);
 
 module.exports = Product;
