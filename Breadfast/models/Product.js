@@ -42,7 +42,7 @@ productSchema.virtual("quantity").get(function () {
 });
 
 productSchema.virtual("category").get(function () {
-  return deriveCategory(this.title || "");
+  return this.storedCategory || deriveCategory(this.title || "");
 });
 
 productSchema.virtual("imageUrl").get(function () {

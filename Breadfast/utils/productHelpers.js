@@ -26,7 +26,7 @@ function collectImageFields(productImage) {
   const fields = {};
 
   function setField(name, url) {
-    if (url && typeof url === "string" && url.startsWith("http") && !fields[name]) {
+    if (url && typeof url === "string" && (url.startsWith("http") || url.startsWith("/")) && !fields[name]) {
       fields[name] = url;
     }
   }

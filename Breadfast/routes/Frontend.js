@@ -135,9 +135,10 @@ router.get(
   authenticateToken,
   authorizeAdmin,
   async (req, res) => {
+    const docs = await Product.find();
     res.render("admin/products", {
       title: "Admin",
-      products: await Product.find(),
+      products: docs.map(p => p.toObject({ virtuals: true })),
     });
   }
 );

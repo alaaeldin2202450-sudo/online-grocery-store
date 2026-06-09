@@ -3,10 +3,18 @@ const Product = require("../models/Product");
 // Create Product
 const createProduct = async (req, res) => {
   try {
-    // Assuming req.file contains the uploaded image file
+    const { name, price, quantity, description } = req.body;
+
+    const imageUrl = req.file
+      ? `/img/upload/${req.file.filename}`
+      : "/img/placeholder.png";
+
     const productData = {
-      ...req.body, // product fields (name, price, etc.)
-      imageUrl: `/img/upload/${req.file.filename}`, // Path to the uploaded file
+      title: name,
+      description,
+      pricing: { price: parseFloat(price) || 0, displayPrice: `EGP ${price}` },
+      productImage: { largeUrl: imageUrl },
+      quantity: parseInt(quantity) || 0,
     };
 
     const product = new Product(productData);

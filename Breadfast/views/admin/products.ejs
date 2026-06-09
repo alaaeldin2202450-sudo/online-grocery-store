@@ -141,17 +141,20 @@
       <div class="card-box mb-30">
         <div class="p-4">
           <% if (products && products.length > 0) { %>
-          <div class="row clearfix">
+          <div class="row clearfix" style="align-items:stretch;">
             <% products.forEach(product => { %>
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-30">
-              <div class="card card-box">
+            <div class="col-lg-3 col-md-6 col-sm-12 mb-30" style="display:flex;flex-direction:column;">
+              <div class="card card-box" style="height:100%;">
                 <img
                   class="card-img-top"
                   src="<%= product.imageUrl %>"
                   alt="<%= product.name %>"
+                  style="height:200px;object-fit:cover;width:100%;"
                 />
                 <div class="card-body">
                   <h5 class="card-title weight-500"><%= product.name %></h5>
+                  <p class="mb-1" style="color:#6c757d;font-size:0.8rem;"><%= product.category %></p>
+                  <p class="mb-2" style="color:#28a745;font-weight:bold;">EGP <%= product.price %></p>
 
                   <div class="d-flex justify-content-between">
                     <a href="" class="btn btn-primary">Show more</a>
